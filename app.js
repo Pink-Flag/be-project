@@ -7,7 +7,7 @@ const { getTopics } = require("./Controllers/topicsController.js");
 app.get("/api/topics", getTopics);
 
 app.use("/*", (req, res) => {
-  res.status(404).send({ msg: "Invalid input" });
+  res.status(404).send({ msg: "Invalid server path" });
 });
 
 app.use((err, req, res, next) => {

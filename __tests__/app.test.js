@@ -1,13 +1,13 @@
 // process.env.NODE_ENV = "test";
 const seed = require("../db/seeds/seed");
-const devData = require("../db/data/development-data/index.js");
+const testData = require("../db/data/test-data/index.js");
 const db = require("../db/connection.js");
-// const { get } = require("../app");
+const { get } = require("../app");
 const app = require("../app");
 const request = require("supertest");
 
 beforeEach(() => {
-  return seed(devData);
+  return seed(testData);
 });
 
 afterAll(() => {
@@ -19,8 +19,8 @@ describe.only("GET API TOPICS", () => {
     return request(app)
       .get("/api/topics")
       .then(({ body }) => {
-        expect(body.topic.length).toEqual(3);
-        body.topic.forEach((topic) => {
+        expect(body.topics.length).toEqual(3);
+        body.topics.forEach((topic) => {
           expect(topic).toEqual(
             expect.objectContaining({
               slug: expect.any(String),
@@ -38,7 +38,7 @@ describe.only("ERROR HANDLING", () => {
       .get("/api/notARoute")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid input");
+        expect(body.msg).toBe("Invalid server path");
       });
   });
 });
