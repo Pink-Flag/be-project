@@ -2,7 +2,6 @@
 const seed = require("../db/seeds/seed");
 const testData = require("../db/data/test-data/index.js");
 const db = require("../db/connection.js");
-const { get } = require("../app");
 const app = require("../app");
 const request = require("supertest");
 
