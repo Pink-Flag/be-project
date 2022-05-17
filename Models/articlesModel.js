@@ -14,6 +14,10 @@ exports.selectArticleById = (articleId) => {
 };
 
 exports.updateArticleById = (articleId, newVotes) => {
+  if (!newVotes) {
+    return Promise.reject({ status: 200, msg: "no vote data!" });
+  }
+
   return db
     .query(
       "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;",

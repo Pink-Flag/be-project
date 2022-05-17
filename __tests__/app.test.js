@@ -140,11 +140,36 @@ describe("tests for patch by article ID", () => {
       });
   });
   it("status 404: returns a not found message when article ID isn't in db", () => {
+    const articleUpdate = {
+      inc_votes: 10,
+    };
     return request(app)
       .patch("/api/articles/9999999")
+      .send(articleUpdate)
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("not found");
+      });
+  });
+  it("status 200: responds with a custom error message when not passed a vote count", () => {
+    return request(app)
+      .patch("/api/articles/1")
+      .send()
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.msg).toBe("no vote data!");
+      });
+  });
+  it("status 400: responds with an error message when passed an invalid input", () => {
+    const articleUpdate = {
+      inc_votes: "NFFC",
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(articleUpdate)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
       });
   });
 });
