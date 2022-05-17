@@ -77,3 +77,74 @@ describe("tests for get article by ID", () => {
       });
   });
 });
+
+describe("tests for patch by article ID", () => {
+  it("status 200: increments votes and responds with updated article", () => {
+    const articleUpdate = {
+      inc_votes: 10,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(articleUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: 1,
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          votes: 110,
+        });
+      });
+  });
+  it("status 200: reduces votes and responds with updated article when passed a negative number", () => {
+    const articleUpdate = {
+      inc_votes: -10,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(articleUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: 1,
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          votes: 90,
+        });
+      });
+  });
+  it("status 200: reduces votes to a negative number and responds with updated article when passed a negative number", () => {
+    const articleUpdate = {
+      inc_votes: -110,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(articleUpdate)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: 1,
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          votes: -10,
+        });
+      });
+  });
+  it("status 404: returns a not found message when article ID isn't in db", () => {
+    return request(app)
+      .patch("/api/articles/9999999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
+      });
+  });
+});

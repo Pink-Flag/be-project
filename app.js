@@ -3,10 +3,14 @@ const app = express();
 app.use(express.json());
 
 const { getTopics } = require("./Controllers/topicsController.js");
-const { getArticleById } = require("./Controllers/articlesController.js");
+const {
+  getArticleById,
+  patchArticleById,
+} = require("./Controllers/articlesController.js");
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
+app.patch("/api/articles/:article_id", patchArticleById);
 
 app.use("/*", (req, res) => {
   res.status(404).send({ msg: "Invalid server path" });
