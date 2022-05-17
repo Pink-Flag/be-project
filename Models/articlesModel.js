@@ -12,3 +12,21 @@ exports.selectArticleById = (articleId) => {
       return result.rows[0];
     });
 };
+
+exports.updateArticleById = (articleId, newVotes) => {
+  if (!newVotes) {
+    return Promise.reject({ status: 200, msg: "no vote data!" });
+  }
+
+  return db
+    .query(
+      "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;",
+      [newVotes, articleId]
+    )
+    .then((result) => {
+      if (!result.rows.length) {
+        return Promise.reject({ status: 404, msg: "not found" });
+      }
+      return result.rows[0];
+    });
+};
