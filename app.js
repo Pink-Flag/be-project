@@ -8,11 +8,13 @@ const {
   patchArticleById,
 } = require("./Controllers/articlesController.js");
 const { getUsers } = require("./Controllers/usersController.js");
+const { getComments } = require("./Controllers/commentsController.js");
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticleById);
 app.get("/api/users", getUsers);
+app.get("/api/comments/:article_id", getComments);
 
 app.use("/*", (req, res) => {
   res.status(404).send({ msg: "Invalid server path" });
