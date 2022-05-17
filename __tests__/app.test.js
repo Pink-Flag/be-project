@@ -184,6 +184,8 @@ describe("get api users", () => {
           expect(user).toEqual(
             expect.objectContaining({
               username: expect.any(String),
+              name: expect.any(String),
+              avatar_url: expect.any(String),
             })
           );
         });
