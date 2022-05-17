@@ -13,7 +13,10 @@ app.use("/*", (req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  console.log(err);
+  res.status(err.status).send({ msg: err.msg });
+});
+
+app.use((err, req, res, next) => {
   res.status(400).send({ msg: "Invalid input" });
 });
 

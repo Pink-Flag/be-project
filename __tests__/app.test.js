@@ -60,12 +60,20 @@ describe("tests for get article by ID", () => {
         });
       });
   });
-  it("status:400, responds with an error message when passed a bad user ID", () => {
+  it("status:400, responds with an error message when passed an invalid ID", () => {
     return request(app)
       .get("/api/articles/hiya")
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Invalid input");
+      });
+  });
+  it("status 404: returns a not found message when article isn't in db", () => {
+    return request(app)
+      .get("/api/articles/99999")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("not found");
       });
   });
 });
