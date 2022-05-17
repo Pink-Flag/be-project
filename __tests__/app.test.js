@@ -57,6 +57,7 @@ describe("tests for get article by ID", () => {
           title: "Living in the shadow of a great man",
           topic: "mitch",
           votes: 100,
+          comments: 11,
         });
       });
   });
@@ -189,6 +190,48 @@ describe("get api users", () => {
             })
           );
         });
+      });
+  });
+});
+
+describe("get comments by article id", () => {
+  it("status 200: responds with comments matching article id", () => {
+    const articleId = 1;
+    return request(app)
+      .get(`/api/comments/${articleId}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(11);
+      });
+  });
+});
+
+describe("add comment count to get article by id", () => {
+  it("status 200: responds with matching article and comment count", () => {
+    const articleId = 1;
+    return request(app)
+      .get(`/api/articles/${articleId}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article).toEqual({
+          article_id: articleId,
+          author: "butter_bridge",
+          body: "I find this existence challenging",
+          created_at: "2020-07-09T20:11:00.000Z",
+          title: "Living in the shadow of a great man",
+          topic: "mitch",
+          comments: 11,
+          votes: 100,
+        });
+      });
+  });
+  it("status 200: responds with comment counter of zero if no comments", () => {
+    const articleID = 2;
+    return request(app)
+      .get(`/api/articles/${articleID}`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.article.comments).toEqual(0);
       });
   });
 });
