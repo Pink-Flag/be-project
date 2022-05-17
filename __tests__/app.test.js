@@ -173,3 +173,20 @@ describe("tests for patch by article ID", () => {
       });
   });
 });
+
+describe("get api users", () => {
+  it("status 200: responds with an array of user objects", () => {
+    return request(app)
+      .get("/api/users")
+      .then(({ body }) => {
+        expect(body.users.length).toEqual(4);
+        body.users.forEach((user) => {
+          expect(user).toEqual(
+            expect.objectContaining({
+              username: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+});
