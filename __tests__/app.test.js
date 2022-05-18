@@ -235,3 +235,26 @@ describe("add comment count to get article by id", () => {
       });
   });
 });
+
+describe("get articles tests", () => {
+  it("status 200: responds with an array of article objects including comment count and the real name of the user", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        expect(body.articles.length).toEqual(12);
+        body.articles.forEach((article) => {
+          expect(article).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              title: expect.any(String),
+              article_id: expect.any(Number),
+              topic: expect.any(String),
+              created_at: expect.any(String),
+              votes: expect.any(Number),
+              comment_count: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+});

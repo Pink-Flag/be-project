@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const users = require("../db/data/test-data/users.js");
 
 exports.selectArticleById = (articleId) => {
   const queryStr = `
@@ -14,9 +15,9 @@ exports.selectArticleById = (articleId) => {
     FROM comments  
     WHERE comments.article_id = $1
   ) AS comments
-  FROM articles AS a
-  JOIN users ON author = users.username
-  WHERE a.article_id = $1`;
+  FROM articles AS data
+  JOIN users ON data.author = users.username
+  WHERE data.article_id = $1`;
 
   return db.query(queryStr, [articleId]).then((result) => {
     if (!result.rows.length) {
@@ -42,4 +43,27 @@ exports.updateArticleById = (articleId, newVotes) => {
       }
       return result.rows[0];
     });
+};
+
+exports.selectArticles = () => {
+  const queryStr = `
+  SELECT
+    users.name AS author,
+    title,
+    article_id,
+    topic,
+    created_at,
+    votes,
+    ( SELECT CAST (COUNT(*) AS INTEGER)
+      FROM comments
+      WHERE comments.article_id = article_id
+    ) AS comment_count
+  FROM articles AS data
+  JOIN users ON data.author = users.username
+  ORDER BY created_at DESC;
+`;
+
+  return db.query(queryStr).then((result) => {
+    return result.rows;
+  });
 };
