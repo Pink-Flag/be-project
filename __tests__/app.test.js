@@ -258,3 +258,51 @@ describe("get articles tests", () => {
       });
   });
 });
+
+describe("GET /api/articles/:article_id/comments", () => {
+  it("respondes with status 200 and an array of comments for the given article_id of which each comment should have a real name", () => {
+    const article_id = 1;
+    return request(app)
+      .get(`/api/articles/${article_id}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments.length).toBe(11);
+        body.comments.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              author: expect.any(String),
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              body: expect.any(String),
+            })
+          );
+        });
+      });
+  });
+  it("Status 400: bad request if article_id does not exist", () => {
+    return request(app)
+      .get("/api/articles/NottinghamForestAreGoingUp/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Invalid input");
+      });
+  });
+  it("Status 404: should indicate if no comments for article ID can be found", () => {
+    return request(app)
+      .get("/api/articles/1985/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("No comments for this article ID found");
+      });
+  });
+  it("status 200: responds with an empty array if no comments for article ID", () => {
+    const article_id = 2;
+    return request(app)
+      .get(`/api/articles/${article_id}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
+});

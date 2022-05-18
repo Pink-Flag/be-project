@@ -2,6 +2,7 @@ const {
   selectArticleById,
   updateArticleById,
   selectArticles,
+  selectArticleComments,
 } = require("../Models/articlesModel.js");
 
 exports.getArticleById = (req, res, next) => {
