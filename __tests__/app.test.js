@@ -296,4 +296,13 @@ describe("GET /api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("No comments for this article ID found");
       });
   });
+  it("status 200: responds with an empty array if no comments for article ID", () => {
+    const article_id = 2;
+    return request(app)
+      .get(`/api/articles/${article_id}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toEqual([]);
+      });
+  });
 });

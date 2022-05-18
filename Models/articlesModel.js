@@ -69,8 +69,6 @@ exports.selectArticles = () => {
 };
 
 exports.selectArticleComments = (article_id) => {
-  Promise.all([createRef]);
-
   const queryStr = `
   SELECT
   users.name AS author,
@@ -84,12 +82,6 @@ exports.selectArticleComments = (article_id) => {
   `;
 
   return db.query(queryStr, [article_id]).then((result) => {
-    if (!result.rows.length) {
-      return Promise.reject({
-        status: 404,
-        msg: "No comments for this article ID found",
-      });
-    }
     return result.rows;
   });
 };
