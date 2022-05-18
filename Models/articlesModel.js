@@ -1,5 +1,5 @@
 const db = require("../db/connection.js");
-const users = require("../db/data/test-data/users.js");
+const createRef = require("../db/helpers/utils.js");
 
 exports.selectArticleById = (articleId) => {
   const queryStr = `
@@ -64,6 +64,32 @@ exports.selectArticles = () => {
 `;
 
   return db.query(queryStr).then((result) => {
+    return result.rows;
+  });
+};
+
+exports.selectArticleComments = (article_id) => {
+  Promise.all([createRef]);
+
+  const queryStr = `
+  SELECT
+  users.name AS author,
+  comment_id,
+  votes,
+  created_at,
+  body
+  FROM comments AS data
+  JOIN users ON data.author = users.username
+  WHERE data.article_id = $1
+  `;
+
+  return db.query(queryStr, [article_id]).then((result) => {
+    if (!result.rows.length) {
+      return Promise.reject({
+        status: 404,
+        msg: "No comments for this article ID found",
+      });
+    }
     return result.rows;
   });
 };

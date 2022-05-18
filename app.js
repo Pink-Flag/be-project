@@ -7,6 +7,7 @@ const {
   getArticleById,
   patchArticleById,
   getArticles,
+  getArticleComments,
 } = require("./Controllers/articlesController.js");
 const { getUsers } = require("./Controllers/usersController.js");
 const { getComments } = require("./Controllers/commentsController.js");
@@ -17,6 +18,7 @@ app.patch("/api/articles/:article_id", patchArticleById);
 app.get("/api/users", getUsers);
 app.get("/api/comments/:article_id", getComments);
 app.get("/api/articles", getArticles);
+app.get("/api/articles/:article_id/comments", getArticleComments);
 
 app.use("/*", (req, res) => {
   res.status(404).send({ msg: "Invalid server path" });
