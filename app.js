@@ -12,6 +12,7 @@ const { getUsers } = require("./Controllers/usersController.js");
 const {
   getComments,
   getArticleComments,
+  postComment,
 } = require("./Controllers/commentsController.js");
 
 app.get("/api/topics", getTopics);
@@ -21,6 +22,7 @@ app.get("/api/users", getUsers);
 app.get("/api/comments/:article_id", getComments);
 app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getArticleComments);
+app.post("/api/articles/:article_id/comments", postComment);
 
 app.use("/*", (req, res) => {
   res.status(404).send({ msg: "Invalid server path" });

@@ -306,3 +306,58 @@ describe("GET /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("POST /api/articles/:article_id/comments tests", () => {
+  it("status 201: responds with posted comments", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I <3 Brian Eno",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual("I <3 Brian Eno");
+      });
+  });
+  it("status 400: returns error when trying to post comment to article that doesn't exist", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I <3 Brian Eno",
+    };
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid input");
+      });
+  });
+  it("status 400: only allows comments and usernames as a string", () => {
+    const newComment = {
+      username: 12345,
+      body: true,
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid input");
+      });
+  });
+  it("status 400: returns an error if passed empty comment", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Invalid input");
+      });
+  });
+});
