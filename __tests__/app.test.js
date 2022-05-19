@@ -66,7 +66,7 @@ describe("tests for get article by ID", () => {
       .get("/api/articles/hiya")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid input");
+        expect(body.msg).toBe("Bad request");
       });
   });
   it("status 404: returns a not found message when article isn't in db", () => {
@@ -74,7 +74,7 @@ describe("tests for get article by ID", () => {
       .get("/api/articles/99999")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("not found");
+        expect(body.msg).toBe("Not found");
       });
   });
 });
@@ -170,7 +170,7 @@ describe("tests for patch by article ID", () => {
       .send(articleUpdate)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid input");
+        expect(body.msg).toBe("Bad request");
       });
   });
 });
@@ -285,7 +285,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .get("/api/articles/NottinghamForestAreGoingUp/comments")
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Invalid input");
+        expect(body.msg).toBe("Bad request");
       });
   });
   it("Status 404: should indicate if no comments for article ID can be found", () => {
@@ -303,6 +303,114 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.comments).toEqual([]);
+      });
+  });
+});
+
+describe("POST /api/articles/:article_id/comments tests", () => {
+  it("status 201: responds with posted comments", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I <3 Brian Eno",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual("I <3 Brian Eno");
+      });
+  });
+  it("status 404: returns error when trying to post comment to article that doesn't exist", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "I <3 Brian Eno",
+    };
+    return request(app)
+      .post("/api/articles/9999/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Not found");
+      });
+  });
+  it("status 400: only allows comments and usernames as a string", () => {
+    const newComment = {
+      username: 12345,
+      body: true,
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  it("status 400: returns an error if passed empty comment", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  it('Status 400, invalid ID, e.g. string of "not-an-id"', () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "listen to ambient 1: music for airports",
+    };
+    return request(app)
+      .post("/api/articles/brianeno/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  it("Status 400, missing required field(s), e.g. no username or body properties", () => {
+    const newComment = {
+      username: "",
+      body: "",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  it("Status 404, username does not exist", () => {
+    const newComment = {
+      username: "William-Basinski",
+      body: "Disintegration Loops",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Not found");
+      });
+  });
+  it("Status 201: ignores unecessary properties", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "Go outside. Shut the door.",
+      bestPackOfCards: "Oblique Strategies",
+    };
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        expect(body.comment).toEqual("Go outside. Shut the door.");
       });
   });
 });
