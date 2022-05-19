@@ -45,8 +45,10 @@ exports.updateArticleById = (articleId, newVotes) => {
     });
 };
 
-exports.selectArticles = () => {
-  const queryStr = `
+exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
+  const queryArr = [];
+
+  let queryStr = `
   SELECT
     users.name AS author,
     title,
@@ -59,11 +61,19 @@ exports.selectArticles = () => {
       WHERE comments.article_id = article_id
     ) AS comment_count
   FROM articles AS data
-  JOIN users ON data.author = users.username
-  ORDER BY created_at DESC;
-`;
+  JOIN users ON data.author = users.username`;
 
-  return db.query(queryStr).then((result) => {
+  if (topic !== undefined) {
+    queryStr += ` WHERE data.topic = $1`;
+    queryArr.push(topic);
+  }
+
+  queryStr += `
+  GROUP BY article_id, title, users.username
+  ORDER BY ${sort_by} ${order}
+  `;
+
+  return db.query(queryStr, queryArr).then((result) => {
     return result.rows;
   });
 };

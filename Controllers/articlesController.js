@@ -29,7 +29,15 @@ exports.patchArticleById = (req, res, next) => {
 };
 
 exports.getArticles = (req, res, next) => {
-  selectArticles()
+  const queries = ["sort_by", "order", "topic"];
+
+  if (!Object.keys(req.query).every((query) => queries.includes(query))) {
+    throw { status: 400, msg: "Bad request" };
+  }
+
+  const { sort_by, order, topic } = req.query;
+
+  selectArticles(sort_by, order, topic)
     .then((articles) => {
       res.status(200).send({ articles });
     })
