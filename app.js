@@ -29,11 +29,23 @@ app.use("/*", (req, res) => {
 });
 
 app.use((err, req, res, next) => {
+  if (err.code === "23503") {
+    res.status(400).send({ msg: "Article doesn't exist!" });
+  } else {
+    next(err);
+  }
+});
+
+app.use((err, req, res, next) => {
   res.status(err.status).send({ msg: err.msg });
 });
 
 app.use((err, req, res, next) => {
-  res.status(400).send({ msg: "Invalid input" });
+  res.status(400).send({ msg: "Bad request" });
+});
+
+app.use((err, req, res, next) => {
+  res.status(404).send({ msg: "Not found" });
 });
 
 app.use((err, req, res, next) => {

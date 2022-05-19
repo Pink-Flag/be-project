@@ -3,7 +3,10 @@ const {
   insertComment,
 } = require("../Models/commentsModel.js");
 const { articleCheck } = require("../Models/utilsModel.js");
-const { selectArticleComments } = require("../Models/articlesModel.js");
+const {
+  selectArticleComments,
+  selectArticleById,
+} = require("../Models/articlesModel.js");
 
 exports.getComments = (req, res, next) => {
   const { article_id } = req.params;
@@ -33,11 +36,20 @@ exports.getArticleComments = (req, res, next) => {
 
 exports.postComment = (req, res, next) => {
   const { article_id } = req.params;
-  insertComment(article_id, req.body)
-    .then((comment) => {
+
+  const promise = [
+    selectArticleById(article_id),
+    insertComment(article_id, req.body),
+  ];
+
+  Promise.all(promise)
+    .then(([article_id, comment]) => {
       res.status(201).send({ comment });
     })
     .catch((err) => {
+      if (err.code === "23503") {
+        next({ status: 404, msg: "Not found" });
+      }
       next(err);
     });
 };
