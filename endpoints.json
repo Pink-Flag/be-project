@@ -1,0 +1,107 @@
+{
+  "GET /api": {
+    "description": "serves up a json representation of all the available endpoints of the api"
+  },
+  "GET /api/topics": {
+    "description": "serves an array of all topics",
+    "queries": [],
+    "exampleResponse": {
+      "topics": [
+        {
+          "slug": "football",
+          "description": "Footie!"
+        }
+      ]
+    }
+  },
+  "GET /api/articles": {
+    "description": "serves an array of all topics",
+    "queries": ["author", "topic", "sort_by", "order"],
+    "exampleResponse": {
+      "articles": [
+        {
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": 1527695953341
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "serves an individual article from input id",
+    "queries": [],
+    "example response": {
+      "article": {
+        "author": "butter_bridge",
+        "title": "Living in the shadow of a great man",
+        "article_id": 1,
+        "body": "I find this existence challenging",
+        "topic": "mitch",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "votes": 100,
+        "comments": 11
+      }
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "serves an array of comment objects from given ID",
+    "queries": [],
+    "example response": {
+      "comments": {
+        "author": "jonny",
+        "comment_id": 2,
+        "votes": 14,
+        "created_at": "2020-10-31T03:03:00.000Z",
+        "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky."
+      }
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all user objects",
+    "queries": [],
+    "example response": {
+      "users": {
+        "username": "rogersop",
+        "name": "paul",
+        "avatar_url": "https://avatars2.githubusercontent.com/u/24394918?s=400&v=4"
+      }
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "increments or decrements article vote by specified amount then returns object with new vote count",
+    "example input": {
+      "inc_votes": 1
+    },
+    "queries": [],
+    "example response": {
+      "artices": {
+        "article_id": 1,
+        "title": "Living in the shadow of a great man",
+        "topic": "mitch",
+        "author": "butter_bridge",
+        "body": "I find this existence challenging",
+        "created_at": "2020-07-09T20:11:00.000Z",
+        "votes": 110
+      }
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "posts a comment and username to the given article id and then returns an object with the posted comment and user",
+    "example input": {
+      "username": "brian_eno",
+      "body": "here come the warm jets"
+    },
+    "queries": [],
+    "example response": {
+      "username": "brian_eno",
+      "body": "here come the warm jets"
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment from given comment id and returns a 204 status code",
+    "queries": [],
+    "example response": {}
+  }
+}
