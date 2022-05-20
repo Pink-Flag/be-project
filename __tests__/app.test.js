@@ -4,6 +4,7 @@ const testData = require("../db/data/test-data/index.js");
 const db = require("../db/connection.js");
 const app = require("../app");
 const request = require("supertest");
+require("jest-sorted");
 
 beforeEach(() => {
   return seed(testData);
@@ -198,7 +199,7 @@ describe("get comments by article id", () => {
   it("status 200: responds with comments matching article id", () => {
     const articleId = 1;
     return request(app)
-      .get(`/api/comments/${articleId}`)
+      .get(`/api/articles/${articleId}/comments`)
       .expect(200)
       .then(({ body }) => {
         expect(body.comments.length).toBe(11);
@@ -411,6 +412,116 @@ describe("POST /api/articles/:article_id/comments tests", () => {
       .expect(201)
       .then(({ body }) => {
         expect(body.comment).toEqual("Go outside. Shut the door.");
+      });
+  });
+});
+describe("get articles tests", () => {
+  it("status 200: responds with an array of article sorted by article id, defaulting to descending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=article_id")
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
+        expect(body.articles).toBeSorted({
+          key: "article_id",
+          descending: true,
+        });
+        body.articles.forEach((topic) => {
+          expect(topic).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              comment_count: expect.any(Number),
+              created_at: expect.any(String),
+              title: expect.any(String),
+              topic: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
+        });
+      });
+  });
+  it("status 200: responds with an array of article defaulting to created_at in ascending order", () => {
+    return request(app)
+      .get("/api/articles?order=asc")
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
+        expect(body.articles).toBeSorted({
+          key: "created_at",
+          descending: false,
+        });
+      });
+  });
+  it("status 200: responds with an array of article defaulting to created_at and descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
+        expect(body.articles).toBeSorted({
+          key: "created_at",
+          descending: true,
+        });
+      });
+  });
+  it("status 200: responds with an array of article sorted by title in ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=asc")
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(12);
+        expect(body.articles).toBeSorted({
+          key: "title",
+          descending: false,
+        });
+      });
+  });
+  it("status 200: responds with an array of articles matching topic of cats", () => {
+    return request(app)
+      .get("/api/articles?topic=cats")
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(1);
+      });
+  });
+  it("status 200: responds with an array of articles matching topic of mitch in ascending order by creation date", () => {
+    return request(app)
+      .get("/api/articles?topic=mitch&sort_by=created_at&order=asc")
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(11);
+        expect(body.articles).toBeSorted({
+          key: "created_at",
+          descending: false,
+        });
+      });
+  });
+
+  it("status 400: responds with an error if provided with invalid query for valid key", () => {
+    return request(app)
+      .get("/api/articles?sort_by=fugazi")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  it("status 400: responds with an error if provided with correct key and query but wrong order query", () => {
+    return request(app)
+      .get("/api/articles?topic=cats&order=dogs")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  it("status 404: responds with an error if provided with incorrect topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=bananas")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Not found");
+      });
+  });
+  it("status 200: responds with empty array to valid topic query with no matching articles", () => {
+    return request(app)
+      .get("/api/articles?topic=paper")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toEqual([]);
       });
   });
 });

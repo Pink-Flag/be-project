@@ -8,18 +8,6 @@ const {
   selectArticleById,
 } = require("../Models/articlesModel.js");
 
-exports.getComments = (req, res, next) => {
-  const { article_id } = req.params;
-
-  selectCommentsById(article_id)
-    .then((comments) => {
-      res.status(200).send({ comments });
-    })
-    .catch((err) => {
-      next(err);
-    });
-};
-
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
   const promises = [articleCheck(article_id)];
