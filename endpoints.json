@@ -1,5 +1,3 @@
-```add api endpoint!!!!```!!!!!!!!
-
 {
   "GET /api": {
     "description": "serves up a json representation of all the available endpoints of the api"
@@ -100,5 +98,10 @@
       "username": "brian_eno",
       "body": "here come the warm jets"
     }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "deletes a comment from given comment id and returns a 204 status code",
+    "queries": [],
+    "example response": {}
   }
 }

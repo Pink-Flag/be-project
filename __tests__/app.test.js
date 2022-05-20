@@ -5,6 +5,7 @@ const db = require("../db/connection.js");
 const app = require("../app");
 const request = require("supertest");
 require("jest-sorted");
+const apiEndpoints = require("../endpoints.json");
 
 beforeEach(() => {
   return seed(testData);
@@ -548,6 +549,16 @@ describe("tests for DELETE /api/comments/:commentId", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toEqual("Bad request");
+      });
+  });
+});
+describe("tests for GET /api endpoints", () => {
+  it("status 200: returns endpoints JSON", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toEqual(apiEndpoints);
       });
   });
 });
