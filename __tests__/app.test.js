@@ -199,7 +199,7 @@ describe("get comments by article id", () => {
   it("status 200: responds with comments matching article id", () => {
     const articleId = 1;
     return request(app)
-      .get(`/api/comments/${articleId}`)
+      .get(`/api/articles/${articleId}/comments`)
       .expect(200)
       .then(({ body }) => {
         expect(body.comments.length).toBe(11);
@@ -425,6 +425,19 @@ describe("get articles tests", () => {
           key: "article_id",
           descending: true,
         });
+        body.articles.forEach((topic) => {
+          expect(topic).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              author: expect.any(String),
+              comment_count: expect.any(Number),
+              created_at: expect.any(String),
+              title: expect.any(String),
+              topic: expect.any(String),
+              votes: expect.any(Number),
+            })
+          );
+        });
       });
   });
   it("status 200: responds with an array of article defaulting to created_at in ascending order", () => {
@@ -478,36 +491,37 @@ describe("get articles tests", () => {
         });
       });
   });
-  it("status 400: responds with an error if provided with invalid query", () => {
-    return request(app)
-      .get("/api/articles?brian=eno")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request");
-      });
-  });
-  it("status 400: responds with an error if provided with key for order", () => {
-    return request(app)
-      .get("/api/articles?orderMe=asc")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request");
-      });
-  });
-  it("status 404: responds with an error if provided with invalid query for valid key", () => {
+
+  it("status 400: responds with an error if provided with invalid query for valid key", () => {
     return request(app)
       .get("/api/articles?sort_by=fugazi")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  it("status 400: responds with an error if provided with correct key and query but wrong order query", () => {
+    return request(app)
+      .get("/api/articles?topic=cats&order=dogs")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+  it("status 404: responds with an error if provided with incorrect topic query", () => {
+    return request(app)
+      .get("/api/articles?topic=bananas")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toEqual("Not found");
       });
   });
-  it("status 400: responds with an error if provided with correct key and query but wrong order query", () => {
+  it("status 200: responds with empty array to valid topic query with no matching articles", () => {
     return request(app)
-      .get("/api/articles?topic=cats&order_by=dogs")
-      .expect(400)
+      .get("/api/articles?topic=paper")
+      .expect(200)
       .then(({ body }) => {
-        expect(body.msg).toEqual("Bad request");
+        expect(body.articles).toEqual([]);
       });
   });
 });

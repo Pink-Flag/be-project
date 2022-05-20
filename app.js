@@ -15,14 +15,23 @@ const {
   postComment,
 } = require("./Controllers/commentsController.js");
 
-app.get("/api/topics", getTopics);
+//articles
 app.get("/api/articles/:article_id", getArticleById);
 app.patch("/api/articles/:article_id", patchArticleById);
-app.get("/api/users", getUsers);
-app.get("/api/comments/:article_id", getComments);
 app.get("/api/articles", getArticles);
-app.get("/api/articles/:article_id/comments", getArticleComments);
+
+// topics
+app.get("/api/topics", getTopics);
+
+//comments
+
 app.post("/api/articles/:article_id/comments", postComment);
+app.get("/api/articles/:article_id/comments", getArticleComments);
+
+//users
+app.get("/api/users", getUsers);
+
+//errors
 
 app.use("/*", (req, res) => {
   res.status(404).send({ msg: "Invalid server path" });
@@ -35,13 +44,13 @@ app.use((err, req, res, next) => {
   if (err.code === "42703") {
     res.status(404).send({ msg: "Not found" });
   } else {
-    next(err);
+    res.status(err.status).send({ msg: err.msg });
   }
 });
 
-app.use((err, req, res, next) => {
-  res.status(err.status).send({ msg: err.msg });
-});
+// app.use((err, req, res, next) => {
+//   res.status(err.status).send({ msg: err.msg });
+// });
 
 app.use((err, req, res, next) => {
   res.status(400).send({ msg: "Bad request" });

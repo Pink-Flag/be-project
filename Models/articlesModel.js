@@ -1,5 +1,6 @@
 const db = require("../db/connection.js");
 const createRef = require("../db/helpers/utils.js");
+const { selectTopics } = require("./topicsModel.js");
 
 exports.selectArticleById = (articleId) => {
   const queryStr = `
@@ -45,7 +46,51 @@ exports.updateArticleById = (articleId, newVotes) => {
     });
 };
 
-exports.selectArticles = (sort_by = "created_at", order = "desc", topic) => {
+exports.selectArticles = async (
+  sort_by = "created_at",
+  order = "desc",
+  topic
+) => {
+  // create greenlists
+
+  let promisedTopics = [];
+
+  try {
+    promisedTopics = await selectTopics();
+  } catch (err) {
+    return Promise.reject({
+      status: 500,
+      msg: "Server Error, return to clowntown",
+    });
+  }
+
+  const validTopics = promisedTopics.map((topic) => topic.slug);
+
+  const validSortBy = [
+    "created_at",
+    "title",
+    "author",
+    "votes",
+    "article_id",
+    "topic",
+  ];
+
+  const validOrder = ["ASC", "DESC"];
+
+  //greenlist checks
+
+  order = order.toUpperCase();
+
+  if (!validSortBy.includes(sort_by) || !validOrder.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Bad request" });
+  }
+
+  if (!validTopics.includes(topic) && topic !== undefined) {
+    return Promise.reject({ status: 404, msg: "Not found" });
+  }
+
+  //create queryStr and pass into database query
+
   const queryArr = [];
 
   let queryStr = `
