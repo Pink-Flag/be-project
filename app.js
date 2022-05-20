@@ -14,6 +14,11 @@ const {
   postComment,
   deleteCommentById,
 } = require("./Controllers/commentsController.js");
+const { getEndpoints } = require("./Controllers/apiController.js");
+
+//api helper
+
+app.get("/api", getEndpoints);
 
 //articles
 app.get("/api/articles/:article_id", getArticleById);
