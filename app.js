@@ -10,9 +10,9 @@ const {
 } = require("./Controllers/articlesController.js");
 const { getUsers } = require("./Controllers/usersController.js");
 const {
-  getComments,
   getArticleComments,
   postComment,
+  deleteCommentById,
 } = require("./Controllers/commentsController.js");
 
 //articles
@@ -27,6 +27,7 @@ app.get("/api/topics", getTopics);
 
 app.post("/api/articles/:article_id/comments", postComment);
 app.get("/api/articles/:article_id/comments", getArticleComments);
+app.delete("/api/comments/:comment_id", deleteCommentById);
 
 //users
 app.get("/api/users", getUsers);

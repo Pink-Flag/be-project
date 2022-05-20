@@ -525,3 +525,29 @@ describe("get articles tests", () => {
       });
   });
 });
+describe("tests for DELETE /api/comments/:commentId", () => {
+  it("status 204: deletes comment by comment id and responds with status and no content", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  it("status 404: returns error if id doesn't exist", () => {
+    return request(app)
+      .delete("/api/comments/12345678")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Not found");
+      });
+  });
+  it("status 400: returns error if id is of incorrect type", () => {
+    return request(app)
+      .delete("/api/comments/theVelvetUnderground")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toEqual("Bad request");
+      });
+  });
+});
