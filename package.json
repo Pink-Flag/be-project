@@ -8,7 +8,9 @@
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest --watchAll",
     "prepare": "husky install",
-    "dev": "NODE_ENV=development nodemon listen.js"
+    "dev": "NODE_ENV=development nodemon listen.js",
+    "seed:prod": "NODE_ENV=production DATABASE_URL=$(heroku config:get DATABASE_URL) npm run seed",
+    "start": "node listen.js"
   },
   "repository": {
     "type": "git",
