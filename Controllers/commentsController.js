@@ -1,6 +1,7 @@
 const {
   selectCommentsById,
   insertComment,
+  removeCommentById,
 } = require("../Models/commentsModel.js");
 const { articleCheck } = require("../Models/utilsModel.js");
 const {
@@ -38,6 +39,17 @@ exports.postComment = (req, res, next) => {
       if (err.code === "23503") {
         next({ status: 404, msg: "Not found" });
       }
+      next(err);
+    });
+};
+exports.deleteCommentById = (req, res, next) => {
+  const { comment_id } = req.params;
+
+  removeCommentById(comment_id)
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch((err) => {
       next(err);
     });
 };
