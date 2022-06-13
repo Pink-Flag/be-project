@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-app.use(express.json());
+const cors = require("cors");
 
 const { getTopics } = require("./Controllers/topicsController.js");
 const {
@@ -15,6 +15,9 @@ const {
   deleteCommentById,
 } = require("./Controllers/commentsController.js");
 const { getEndpoints } = require("./Controllers/apiController.js");
+
+app.use(cors());
+app.use(express.json());
 
 //api helper
 

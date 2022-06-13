@@ -10,6 +10,7 @@ const { dropTables, createTables } = require("../helpers/manage-tables");
 const seed = async ({ topicData, userData, articleData, commentData }) => {
   await dropTables();
   await createTables();
+  console.log("hiya");
 
   const insertTopicsQueryStr = format(
     "INSERT INTO topics (slug, description) VALUES %L RETURNING *;",
