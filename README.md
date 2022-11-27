@@ -1,8 +1,8 @@
 # NC News API documentation
 
-This is version of a social news aggregator website such as Reddit. It has been created with Node.js and Express. The data is stored with PostgreSQL and the API is hosted via Heroku:
+This is version of a social news aggregator website such as Reddit. It has been created with Node.js and Express. The data is stored with PostgreSQL and the API is hosted via ElephantSQL and Cyclic:
 
-https://trickmirror.herokuapp.com/api
+https://encouraging-dog-pleat.cyclic.app/api
 
 All available endpoints
 
